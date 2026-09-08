@@ -1,5 +1,7 @@
 # dirsociety
 
+[![CI](https://github.com/rudiseran/dirsociety/actions/workflows/ci.yml/badge.svg)](https://github.com/rudiseran/dirsociety/actions/workflows/ci.yml)
+
 **Fast, stealthy web content-discovery scanner** — like `dirsearch`/`ffuf`, plus
 automatic **403/401 bypass**, **soft-404 calibration** for accuracy, and optional
 **AI triage** of findings. Pure Python standard library — **no dependencies**.
