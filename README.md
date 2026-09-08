@@ -21,7 +21,7 @@ automatic **403/401 bypass**, **soft-404 calibration** for accuracy, and optiona
 ## Install
 
 ```bash
-git clone https://github.com/<you>/dirsociety.git
+git clone https://github.com/rudiseran/dirsociety.git
 cd dirsociety
 # run directly — no install needed:
 python -m dirsociety --help
