@@ -267,8 +267,8 @@ def _run(argv=None):
 
     import time
     t0 = time.time()
-    findings, total, stopped = scan(base, a.wordlist, exts, threads, fetcher, cal,
-                                    codes, not a.no_bypass, on_hit=on_hit)
+    findings, total, stopped, rate_limited = scan(base, a.wordlist, exts, threads, fetcher,
+                                                  cal, codes, not a.no_bypass, on_hit=on_hit)
     dt = time.time() - t0
     rate = total / dt if dt else 0
     if stopped:
@@ -277,6 +277,11 @@ def _run(argv=None):
     else:
         sys.stderr.write(f"[*] done: {len(findings)} hits from {total} requests "
                          f"in {dt:.1f}s ({rate:.0f} req/s)\n")
+    if rate_limited:
+        pct = rate_limited * 100 // total if total else 0
+        sys.stderr.write(_c(
+            f"[!] target rate-limit (429) pada {rate_limited} request ({pct}%) — hasil TAK LENGKAP.\n"
+            f"    pelan-pelankan: --stealth  |  -t 5  |  --delay 0.5,2\n", "1;33", color))
 
     summary = {}
     for f in findings:

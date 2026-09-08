@@ -123,22 +123,24 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
     Returns (findings, requests_done, stopped)."""
     paths = list(build_paths(wordlist, exts))
     total = len(paths)
-    findings, lock, done, errors = [], threading.Lock(), [0], [0]
+    findings, lock, done, errors, rl = [], threading.Lock(), [0], [0], [0]
     t0 = time.time()
 
     def draw():
         el = time.time() - t0
         rate = done[0] / el if el else 0
         pct = done[0] * 100 // total if total else 0
+        extra = f"  rate-limited:{rl[0]}" if rl[0] else ""
         sys.stderr.write(f"\r[*] {done[0]}/{total} ({pct}%)  {rate:.0f}/s  "
-                         f"errors:{errors[0]}   ")
+                         f"errors:{errors[0]}{extra}   ")
         sys.stderr.flush()
 
     def work(p):
         url = urljoin(base, quote(p, safe="/._-~"))
         st, ln, _, loc = fetcher.get(url)
         hit = None
-        if st is not None and st != 404 and not is_soft404(st, ln, cal, loc) \
+        # 429 = rate-limited, not a discovery — count it, never report it as a hit
+        if st is not None and st not in (404, 429) and not is_soft404(st, ln, cal, loc) \
                 and not (codes and st not in codes):
             hit = {"url": url, "path": p, "status": st, "length": ln, "tags": vuln_tags(p)}
             if loc:
@@ -151,6 +153,8 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
             done[0] += 1
             if st is None:
                 errors[0] += 1
+            elif st == 429:
+                rl[0] += 1
             if hit is not None:
                 findings.append(hit)
                 if on_hit and progress:
@@ -173,4 +177,4 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
     if progress:
         sys.stderr.write("\r" + " " * 60 + "\r")
     findings.sort(key=lambda f: (not f["tags"], f["status"]))
-    return findings, done[0] if stopped else total, stopped
+    return findings, done[0] if stopped else total, stopped, rl[0]
