@@ -63,7 +63,7 @@ python -m dirsociety -u https://target --codes 200,301,403 \
 | Flag | Description |
 |------|-------------|
 | `-u, --url` | Target base URL (required) |
-| `-w, --wordlist` | Wordlist path (default: bundled `dirsociety/wordlists/dirsociety.txt`, ~47k) |
+| `-w, --wordlist` | Wordlist path, or bundled name: `dirsociety` (default ~12.7k), `big` (~106k), `common`, `indonesia` |
 | `-x, --extensions` | Comma-separated extensions to append |
 | `-t, --threads` | Concurrency (default 40; capped at 4 in stealth) |
 | `--stealth` | Low concurrency + jitter + UA rotation |
@@ -159,11 +159,11 @@ python tests/test_dirsociety.py      # or: python -m pytest
 ## Credits & licensing
 
 - **Code:** MIT — see [LICENSE](LICENSE).
-- **Default wordlist** `dirsociety.txt`: a merged compilation of our own lists (MIT),
-  [SecLists](https://github.com/danielmiessler/SecLists) raft-large (MIT), and
-  [dirsearch](https://github.com/maurosoria/dirsearch) `dicc.txt` (GPL-2.0). Because it
-  includes GPL-2.0 entries, **that file is distributed under GPL-2.0** (the code stays
-  MIT — the wordlist is bundled as data, mere aggregation). For a 100% MIT build, delete
-  `dirsociety.txt` and use `common.txt`/`indonesia.txt` or your own via `-w`.
+- **Wordlists** `dirsociety.txt` (default) and `big.txt` combine our own lists (MIT),
+  [dirsearch](https://github.com/maurosoria/dirsearch) `dicc.txt` (GPL-2.0), and — for
+  `big.txt` only — [SecLists](https://github.com/danielmiessler/SecLists) raft-large (MIT).
+  Because they include GPL-2.0 entries, **those two files are distributed under GPL-2.0**
+  (the code stays MIT — the wordlists are bundled as data, mere aggregation). For a 100%
+  MIT build, delete them and use `common.txt`/`indonesia.txt` or your own via `-w`.
 
 See [NOTICE](NOTICE) for full attribution.
