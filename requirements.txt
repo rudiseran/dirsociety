@@ -1,0 +1,1 @@
+# dirsociety requires no third-party packages (Python 3.8+ standard library only).

@@ -1,0 +1,31 @@
+dirsociety — third-party content notices
+=========================================
+
+CODE
+----
+All source code in this repository is licensed under the MIT License (see LICENSE).
+
+WORDLISTS
+---------
+dirsociety/wordlists/common.txt, indonesia.txt, weak-passwords.txt
+    Original to this project. MIT License.
+
+dirsociety/wordlists/dirsociety.txt  (the default wordlist)
+    A merged, de-duplicated compilation of:
+
+      - the original dirsociety lists above                       (MIT)
+      - SecLists raft-large-directories.txt / raft-large-files.txt (MIT)
+          https://github.com/danielmiessler/SecLists
+          Copyright (c) Daniel Miessler, Jason Haddix, g0tmi1k and contributors
+      - dirsearch db/dicc.txt                                      (GPL-2.0)
+          https://github.com/maurosoria/dirsearch
+          Copyright (c) Mauro Soria
+
+    Because it incorporates GPL-2.0-licensed entries (dicc.txt), the file
+    dirsociety/wordlists/dirsociety.txt is distributed under the GNU General
+    Public License v2.0. This does NOT relicense the dirsociety source code,
+    which remains MIT — the wordlist is bundled as a data file (mere
+    aggregation), not linked into the program.
+
+    If you need a 100% MIT-clean build, delete dirsociety.txt and point
+    dirsociety at common.txt / indonesia.txt or your own list with -w.
