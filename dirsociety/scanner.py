@@ -124,6 +124,7 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
     paths = list(build_paths(wordlist, exts))
     total = len(paths)
     findings, lock, done, errors, rl = [], threading.Lock(), [0], [0], [0]
+    aborted = [False]   # tripped when the target is clearly rate-limiting from the start
     t0 = time.time()
 
     def draw():
@@ -136,6 +137,8 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
         sys.stderr.flush()
 
     def work(p):
+        if aborted[0]:
+            return None  # rate-limit detected — skip remaining requests, finish fast
         url = urljoin(base, quote(p, safe="/._-~"))
         st, ln, _, loc = fetcher.get(url)
         hit = None
@@ -155,6 +158,9 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
                 errors[0] += 1
             elif st == 429:
                 rl[0] += 1
+            # early-abort: after a warmup, if the target is 429-ing almost everything, stop
+            if not aborted[0] and done[0] >= 40 and rl[0] >= done[0] * 0.8:
+                aborted[0] = True
             if hit is not None:
                 findings.append(hit)
                 if on_hit and progress:
@@ -177,4 +183,4 @@ def scan(base, wordlist, exts, threads, fetcher, cal, codes, do_bypass,
     if progress:
         sys.stderr.write("\r" + " " * 60 + "\r")
     findings.sort(key=lambda f: (not f["tags"], f["status"]))
-    return findings, done[0] if stopped else total, stopped, rl[0]
+    return findings, done[0] if (stopped or aborted[0]) else total, stopped, rl[0], aborted[0]
